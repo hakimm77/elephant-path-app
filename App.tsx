@@ -1,27 +1,29 @@
 import React from "react";
-import {
-  Text,
-  Link,
-  HStack,
-  Center,
-  Heading,
-  Switch,
-  useColorMode,
-  NativeBaseProvider,
-  extendTheme,
-  VStack,
-  Box,
-} from "native-base";
-import NativeBaseIcon from "./components/NativeBaseIcon";
+import { NativeBaseProvider, extendTheme, Flex } from "native-base";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { ChatScreen } from "./screens/ChatScreen";
+import { Image } from "react-native";
+import { colors } from "./utils/colors";
+import { ResourcesScreen } from "./screens/ResourcesScreen";
+import { RetreatsScreen } from "./screens/RetreatsScreen";
 
-// Define the config
 const config = {
   useSystemColorMode: false,
-  initialColorMode: "dark",
 };
 
-// extend the theme
-export const theme = extendTheme({ config });
+const Tab = createBottomTabNavigator();
+
+export const theme = extendTheme({
+  config,
+  colors: {
+    primary: {
+      500: colors.primary,
+    },
+    text: colors.text,
+  },
+});
+
 type MyThemeType = typeof theme;
 declare module "native-base" {
   interface ICustomTheme extends MyThemeType {}
@@ -29,59 +31,49 @@ declare module "native-base" {
 export default function App() {
   return (
     <NativeBaseProvider>
-      <Center
-        _dark={{ bg: "blueGray.900" }}
-        _light={{ bg: "blueGray.50" }}
-        px={4}
-        flex={1}
-      >
-        <VStack space={5} alignItems="center">
-          <NativeBaseIcon />
-          <Heading size="lg">Welcome to NativeBase</Heading>
-          <HStack space={2} alignItems="center">
-            <Text>Edit</Text>
-            <Box
-              _web={{
-                _text: {
-                  fontFamily: "monospace",
-                  fontSize: "sm",
-                },
-              }}
-              px={2}
-              py={1}
-              _dark={{ bg: "blueGray.800" }}
-              _light={{ bg: "blueGray.200" }}
-            >
-              App.js
-            </Box>
-            <Text>and save to reload.</Text>
-          </HStack>
-          <Link href="https://docs.nativebase.io" isExternal>
-            <Text color="primary.500" underline fontSize={"xl"}>
-              Learn NativeBase
-            </Text>
-          </Link>
-          <ToggleDarkMode />
-        </VStack>
-      </Center>
+      <NavigationContainer>
+        <Tab.Navigator>
+          <Tab.Screen
+            name="BodhiBot"
+            options={{
+              tabBarIcon: ({ size, color }) => (
+                <Image
+                  source={require("./assets/frid.png")}
+                  style={{ width: size, height: size }}
+                />
+              ),
+              tabBarLabelStyle: { fontSize: 12, color: colors.text },
+            }}
+            component={ChatScreen}
+          />
+          <Tab.Screen
+            name="Resources"
+            options={{
+              tabBarIcon: ({ size, color }) => (
+                <Image
+                  source={require("./assets/resources.png")}
+                  style={{ width: size, height: size }}
+                />
+              ),
+              tabBarLabelStyle: { fontSize: 12, color: colors.text },
+            }}
+            component={ResourcesScreen}
+          />
+          <Tab.Screen
+            name="Retreats"
+            options={{
+              tabBarIcon: ({ size, color }) => (
+                <Image
+                  source={require("./assets/redirect.png")}
+                  style={{ width: size, height: size }}
+                />
+              ),
+              tabBarLabelStyle: { fontSize: 12, color: colors.text },
+            }}
+            component={RetreatsScreen}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
     </NativeBaseProvider>
-  );
-}
-
-// Color Switch Component
-function ToggleDarkMode() {
-  const { colorMode, toggleColorMode } = useColorMode();
-  return (
-    <HStack space={2} alignItems="center">
-      <Text>Dark</Text>
-      <Switch
-        isChecked={colorMode === "light"}
-        onToggle={toggleColorMode}
-        aria-label={
-          colorMode === "light" ? "switch to dark mode" : "switch to light mode"
-        }
-      />
-      <Text>Light</Text>
-    </HStack>
   );
 }
