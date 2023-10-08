@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Flex,
   Text,
@@ -8,53 +8,88 @@ import {
   VStack,
   Box,
 } from "native-base";
+import { IConversation } from "../utils/types";
+import { handleChat } from "../helpers/apiHandlers/handleChat";
+import { Keyboard } from "react-native";
+import type { ScrollView as ScrollViewType } from "react-native";
 
-interface Message {
-  type: "user" | "bot";
-  content: string;
-}
+export const ChatScreen: React.FC<{ userEmail: string }> = ({ userEmail }) => {
+  const [conversation, setConversation] = useState<IConversation[]>([]);
+  const [userInput, setUserInput] = useState("");
+  const [loadingReponse, setLoadingResponse] = useState(false);
+  const scrollViewRef = useRef<ScrollViewType>(null);
 
-export const ChatScreen: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [currentMessage, setCurrentMessage] = useState<string>("");
+  const handleSubmit = async () => {
+    if (userInput) {
+      Keyboard.dismiss();
+      setLoadingResponse(true);
+      await setConversation((previousConversation) => [
+        ...previousConversation,
+        { role: "user", content: userInput },
+        { role: "assistant", content: "0L1o2a3d4i5n6g7" },
+      ]);
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+      setUserInput("");
 
-  const handleSend = () => {
-    if (currentMessage.trim()) {
-      setMessages([...messages, { type: "user", content: currentMessage }]);
+      await handleChat(
+        [
+          ...conversation,
+          { role: "user", content: userInput },
+          { role: "assistant", content: "0L1o2a3d4i5n6g7" },
+        ],
+        setConversation,
+        setLoadingResponse
+      );
 
-      // Mock AI bot response
-      setTimeout(() => {
-        setMessages([
-          ...messages,
-          { type: "user", content: currentMessage },
-          { type: "bot", content: "Hello from the AI bot!" },
-        ]);
-      }, 1000);
-
-      setCurrentMessage("");
+      scrollViewRef.current?.scrollToEnd({ animated: true });
     }
   };
 
   return (
     <Flex flex={1} bg="white">
-      <ScrollView flex={1} p={4}>
-        <VStack space={4} alignItems="center" flex={1}>
-          {messages.length === 0 ? (
+      <ScrollView
+        flex={1}
+        p={4}
+        ref={scrollViewRef} // Attach the ref to the ScrollView
+      >
+        <VStack flex={1} justifyContent="center" alignItems="center" pb={5}>
+          {conversation.length === 0 ? (
             <Text fontSize="xl" fontWeight="bold" color="gray.500">
               BodhiBot
             </Text>
           ) : (
-            messages.map((message, index) => (
-              <Box
+            conversation &&
+            conversation.map((message, index) => (
+              <Flex
                 key={index}
-                alignSelf={message.type === "user" ? "flex-end" : "flex-start"}
-                bg={message.type === "user" ? "blue.200" : "gray.200"}
-                rounded="lg"
+                flexDir="column"
+                w="fit-content"
+                maxW={"70%"}
                 p={2}
-                maxWidth="70%"
+                mb={3}
+                alignSelf={
+                  message.role === "assistant" ? "flex-start" : "flex-end"
+                }
+                borderRadius={10}
+                bgColor={message.role === "assistant" ? "gray.200" : "#444654"}
               >
-                <Text>{message.content}</Text>
-              </Box>
+                {message.content === "0L1o2a3d4i5n6g7" ? (
+                  <Flex flexDir="row" alignItems="center">
+                    <Button isLoading={true} />
+                    <Text ml={2}>Thinking...</Text>
+                  </Flex>
+                ) : (
+                  <Flex fontSize={15} w="100%">
+                    <Text
+                      color={
+                        message.role === "assistant" ? "#444654" : "gray.200"
+                      }
+                    >
+                      {message.content}
+                    </Text>
+                  </Flex>
+                )}
+              </Flex>
             ))
           )}
         </VStack>
@@ -67,16 +102,16 @@ export const ChatScreen: React.FC = () => {
           variant="outline"
           bg="white"
           borderRadius="30px"
-          value={currentMessage}
-          onChangeText={(text: string) => setCurrentMessage(text)}
+          value={userInput}
+          onChangeText={(text: string) => setUserInput(text)}
         />
-        <Button ml={2} onPress={handleSend}>
+        <Button ml={2} onPress={handleSubmit} isLoading={loadingReponse}>
           Send
         </Button>
         <Button
           ml={2}
           onPress={() => {
-            setMessages([]);
+            setConversation([]);
           }}
         >
           Reset

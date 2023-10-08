@@ -1,4 +1,5 @@
 import axios from "axios";
+import { api } from "../../utils/constants";
 
 export const handleChat = async (
   messages: any,
@@ -7,20 +8,9 @@ export const handleChat = async (
 ) => {
   let conversation = [...messages];
 
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
-  };
-
   try {
     await axios
-      .post(
-        `/api/chat`,
-        { conversation: conversation },
-        {
-          headers,
-        }
-      )
+      .post(`${api}/api/chat`, { conversation: conversation })
       .then(async (response) => {
         conversation[conversation.length - 1] = await response.data.message;
         setLoadingResponse(false);

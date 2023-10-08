@@ -1,8 +1,9 @@
 import axios from "axios";
+import { api } from "../../utils/constants";
 
 export const handleSaveChat = async (email: string, conversation: any) => {
   await axios
-    .post("/api/saveChat", { email, conversation })
+    .post(`${api}/api/saveChat`, { email, conversation })
     .then((res) => {
       console.log(res.data.message);
     })

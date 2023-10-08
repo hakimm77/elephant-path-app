@@ -1,8 +1,9 @@
 import axios from "axios";
+import { api } from "../../utils/constants";
 
 export const handleIntroText = async (setUpperBarText: any) => {
   await axios
-    .get("/api/introText")
+    .get(`${api}/api/introText`)
     .then((res) => {
       setUpperBarText(res.data.text);
     })

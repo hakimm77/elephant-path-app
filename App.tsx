@@ -31,13 +31,18 @@ declare module "native-base" {
   interface ICustomTheme extends MyThemeType {}
 }
 export default function App() {
-  const [loginStatus, setLoginStatus] = useState(true);
+  const [userEmail, setUserEmail] = useState<string>("");
 
   return (
     <NativeBaseProvider>
-      {loginStatus ? (
+      {userEmail ? (
         <NavigationContainer>
-          <Tab.Navigator initialRouteName="BodhiBot">
+          <Tab.Navigator
+            initialRouteName="BodhiBot"
+            screenOptions={({ route }) => ({
+              tabBarActiveBackgroundColor: "gray",
+            })}
+          >
             <Tab.Screen
               name="BodhiBot"
               options={{
@@ -49,8 +54,9 @@ export default function App() {
                 ),
                 tabBarLabelStyle: { fontSize: 12, color: colors.text },
               }}
-              component={ChatScreen}
-            />
+            >
+              {(props) => <ChatScreen {...props} userEmail={userEmail} />}
+            </Tab.Screen>
             <Tab.Screen
               name="Resources"
               options={{
@@ -62,8 +68,9 @@ export default function App() {
                 ),
                 tabBarLabelStyle: { fontSize: 12, color: colors.text },
               }}
-              component={ResourcesScreen}
-            />
+            >
+              {(props) => <ResourcesScreen {...props} userEmail={userEmail} />}
+            </Tab.Screen>
             <Tab.Screen
               name="Retreats"
               options={{
@@ -88,12 +95,13 @@ export default function App() {
                 ),
                 tabBarLabelStyle: { fontSize: 12, color: colors.text },
               }}
-              component={ProfileScreen}
-            />
+            >
+              {(props) => <ProfileScreen {...props} userEmail={userEmail} />}
+            </Tab.Screen>
           </Tab.Navigator>
         </NavigationContainer>
       ) : (
-        <AuthScreen setLoginStatus={setLoginStatus} />
+        <AuthScreen setUser={setUserEmail} />
       )}
     </NativeBaseProvider>
   );

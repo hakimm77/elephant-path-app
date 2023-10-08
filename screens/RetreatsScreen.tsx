@@ -2,7 +2,9 @@ import React, { useEffect } from "react";
 import { Flex, Text } from "native-base";
 import { Linking } from "react-native";
 
-export const RetreatsScreen = () => {
+export const RetreatsScreen: React.FC<{ userEmail?: string }> = ({
+  userEmail,
+}) => {
   useEffect(() => {
     const url = "https://fridmeditation.com/foundationsretreat/";
 
