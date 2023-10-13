@@ -9,6 +9,7 @@ import { ResourcesScreen } from "./screens/ResourcesScreen";
 import { RetreatsScreen } from "./screens/RetreatsScreen";
 import { AuthScreen } from "./screens/AuthScreen";
 import { ProfileScreen } from "./screens/ProfileScreen";
+import { getData } from "./helpers/auth/getData";
 
 const config = {
   useSystemColorMode: false,
@@ -33,6 +34,10 @@ declare module "native-base" {
 export default function App() {
   const [userEmail, setUserEmail] = useState<string>("");
 
+  useEffect(() => {
+    getData("user", setUserEmail);
+  }, []);
+
   return (
     <NativeBaseProvider>
       {userEmail ? (
@@ -40,7 +45,7 @@ export default function App() {
           <Tab.Navigator
             initialRouteName="BodhiBot"
             screenOptions={({ route }) => ({
-              tabBarActiveBackgroundColor: "gray",
+              tabBarActiveBackgroundColor: "#c7c7c7",
             })}
           >
             <Tab.Screen

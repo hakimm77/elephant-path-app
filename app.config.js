@@ -1,5 +1,6 @@
 export default {
   expo: {
+    owner: "hakimm77",
     name: "elephant-path",
     slug: "elephant-path",
     version: "1.0.0",
@@ -12,6 +13,7 @@ export default {
     },
     updates: {
       fallbackToCacheTimeout: 0,
+      useClassicUpdates: true,
     },
     assetBundlePatterns: ["**/*"],
     ios: {
@@ -25,6 +27,11 @@ export default {
     },
     web: {
       favicon: "./assets/favicon.png",
+    },
+    extra: {
+      eas: {
+        projectId: "e1ca8747-8040-400c-ad57-b63255e8e994",
+      },
     },
   },
 };

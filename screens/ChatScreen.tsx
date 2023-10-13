@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Flex,
   Text,
@@ -12,6 +12,8 @@ import { IConversation } from "../utils/types";
 import { handleChat } from "../helpers/apiHandlers/handleChat";
 import { Keyboard } from "react-native";
 import type { ScrollView as ScrollViewType } from "react-native";
+import { handleGetChat } from "../helpers/apiHandlers/handleGetChat";
+import { handleSaveChat } from "../helpers/apiHandlers/handleSaveChat";
 
 export const ChatScreen: React.FC<{ userEmail: string }> = ({ userEmail }) => {
   const [conversation, setConversation] = useState<IConversation[]>([]);
@@ -44,6 +46,16 @@ export const ChatScreen: React.FC<{ userEmail: string }> = ({ userEmail }) => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }
   };
+
+  useEffect(() => {
+    handleGetChat(userEmail, setConversation);
+  }, []);
+
+  useEffect(() => {
+    if (conversation.length > 0) {
+      handleSaveChat(userEmail, conversation);
+    }
+  }, [conversation]);
 
   return (
     <Flex flex={1} bg="white">

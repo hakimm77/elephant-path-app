@@ -5,6 +5,7 @@ export const handleGetChat = async (email: string, setConversation: any) => {
   await axios
     .post(`${api}/api/getChat`, { email })
     .then((res) => {
+      console.log(res.data);
       setConversation(res.data.chat);
     })
     .catch((err) => {
