@@ -1,32 +1,36 @@
 export default {
   expo: {
     owner: "hakimm77",
-    name: "elephant-path",
+    name: "Eelephant Path",
     slug: "elephant-path",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/icon.png",
+    icon: "./assets/logo.png",
     splash: {
-      image: "./assets/splash.png",
+      image: "./assets/logo.png",
       resizeMode: "contain",
       backgroundColor: "#ffffff",
     },
     updates: {
-      fallbackToCacheTimeout: 0,
-      useClassicUpdates: true,
+      url: "https://u.expo.dev/e1ca8747-8040-400c-ad57-b63255e8e994",
+    },
+    runtimeVersion: {
+      policy: "sdkVersion",
     },
     assetBundlePatterns: ["**/*"],
     ios: {
       supportsTablet: true,
+      bundleIdentifier: "com.elephantpath.app",
     },
     android: {
+      package: "com.elephantpath.app",
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/logo.png",
         backgroundColor: "#FFFFFF",
       },
     },
     web: {
-      favicon: "./assets/favicon.png",
+      favicon: "./assets/logo.png",
     },
     extra: {
       eas: {
