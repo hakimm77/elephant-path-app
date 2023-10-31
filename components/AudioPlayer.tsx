@@ -11,7 +11,8 @@ const AudioPlayer: React.FC<{
   duration: number;
   stage: number;
   setPageStatus: any;
-}> = ({ duration, stage, setPageStatus }) => {
+  NoWords: boolean;
+}> = ({ duration, stage, setPageStatus, NoWords }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [playbackFinished, setPlaybackFinished] = useState(false);
@@ -20,7 +21,7 @@ const AudioPlayer: React.FC<{
   const [sound, setSound] = useState<any>(null);
   const [recordingIndex, setRecordingIndex] = useState(0);
   const [silenceLength, setSilenceLength] = useState(0);
-  const stageIndex = stage - 1;
+  const stageIndex = duration < 13 ? 0 : stage - 1;
 
   const seekToPosition = async (value: number) => {
     if (sound) {
@@ -52,11 +53,6 @@ const AudioPlayer: React.FC<{
   async function loadAndPlaySound(recordingIndex: number) {
     if (recordings[stageIndex].timeline.length > recordingIndex) {
       if (recordings[stageIndex].timeline[recordingIndex].link) {
-        console.log(
-          "first contact",
-          recordings[stageIndex].timeline[recordingIndex].link as string
-        );
-
         const { sound: newSound } = await Audio.Sound.createAsync(
           {
             uri: recordings[stageIndex].timeline[recordingIndex].link as string,
@@ -65,20 +61,26 @@ const AudioPlayer: React.FC<{
         );
 
         setSound(newSound);
+        setIsPlaying(true);
+        setIsLoading(false);
       } else {
-        console.log("else");
-
         setSound(null);
 
         setTimeout(() => {
           let nextRecordingIndex = recordingIndex + 1;
-          setRecordingIndex(nextRecordingIndex);
-          loadAndPlaySound(nextRecordingIndex);
+
+          if (nextRecordingIndex > recordings[stageIndex].timeline.length - 1) {
+            setIsPlaying(false);
+            setPlaybackFinished(true);
+            setIsLoading(false);
+          } else {
+            setIsPlaying(true);
+            setIsLoading(false);
+            setRecordingIndex(nextRecordingIndex);
+            loadAndPlaySound(nextRecordingIndex);
+          }
         }, silenceLength);
       }
-
-      setIsPlaying(true);
-      setIsLoading(false);
     }
   }
 
@@ -151,6 +153,12 @@ const AudioPlayer: React.FC<{
       setIsPlaying(!isPlaying);
     }
   };
+
+  useEffect(() => {
+    if (playbackFinished) {
+      setPageStatus("finished");
+    }
+  }, [playbackFinished]);
 
   return (
     <View style={styles.container}>

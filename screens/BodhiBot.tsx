@@ -20,8 +20,7 @@ import {
 import type { ScrollView as ScrollViewType } from "react-native";
 import { handleGetChat } from "../helpers/apiHandlers/handleGetChat";
 import { handleSaveChat } from "../helpers/apiHandlers/handleSaveChat";
-import Icon from "react-native-vector-icons/Ionicons"; // You can choose a different icon library if you prefer
-import { handleStageIdentification } from "../helpers/handleStageIdentification";
+import Icon from "react-native-vector-icons/Ionicons";
 
 export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   userEmail,

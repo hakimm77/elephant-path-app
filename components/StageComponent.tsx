@@ -17,9 +17,9 @@ export const StageComponent: React.FC<{
   stage: any;
   currentStage: number | null;
   navigation: any;
-}> = ({ stage, index, currentStage, navigation }) => {
+  userEmail: string;
+}> = ({ stage, index, currentStage, navigation, userEmail }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [isFullScreen, setIsFullScreen] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
 
   const animateScale = (newValue: any) => {
@@ -47,7 +47,7 @@ export const StageComponent: React.FC<{
     await setModalVisible(false);
 
     navigation.navigate("BodhiBot", {
-      userEmail: "hakimboum406@gmail.com",
+      userEmail: userEmail,
       lesson: lesson,
     });
   };

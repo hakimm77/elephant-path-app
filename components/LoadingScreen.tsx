@@ -3,25 +3,19 @@ import React, { useEffect, useState } from "react";
 import { Audio } from "expo-av";
 import { handleGetAudio } from "../helpers/apiHandlers/handleGetAudio";
 
-export const LoadingScreen: React.FC<{
-  length: number | null;
-  setPageStatus: React.Dispatch<
-    React.SetStateAction<"browse" | "loading" | "audio">
-  >;
-}> = ({ length, setPageStatus }) => {
+export const LoadingScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setPageStatus("audio");
-  }, []);
 
   return (
     <Flex
+      position={"absolute"}
       flex={1}
       width="100%"
       height="100%"
       justifyContent="center"
       alignItems="center"
+      style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+      zIndex={1000}
     >
       {isLoading ? (
         <>

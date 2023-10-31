@@ -20,8 +20,10 @@ import { storeData } from "../helpers/auth/storeData";
 
 export const AuthScreen = ({
   setUser,
+  setStatus,
 }: {
   setUser: React.Dispatch<string>;
+  setStatus: any;
 }) => {
   const { user, signInWithGoogle } = useAuth();
 
@@ -40,7 +42,7 @@ export const AuthScreen = ({
   const handleSignin = async () => {
     if (userEmail) {
       setLoading(true);
-      await storeData("user", userEmail);
+      setStatus("onboarding");
       setUser(userEmail);
     }
     // if (userEmail && userPassword) {
@@ -98,7 +100,13 @@ export const AuthScreen = ({
   // }, [user]);
 
   return (
-    <Flex flex={1} bg="white" alignItems="center" justifyContent="center">
+    <Flex
+      flex={1}
+      bg="white"
+      alignItems="center"
+      justifyContent="center"
+      backgroundColor="#75c3db"
+    >
       <VStack space={4} width="80%">
         {/* <Text fontSize="2xl">Google Sign in</Text>
 
@@ -121,13 +129,16 @@ export const AuthScreen = ({
           </Flex>
         </Button> */}
 
-        <Text fontSize="2xl">{authenticationType}</Text>
+        <Text fontSize="2xl" fontFamily="Quicksand">
+          {authenticationType}
+        </Text>
         <Input
           value={userEmail}
           onChangeText={setUserEmail}
           placeholder="Email"
           variant="outline"
           width="100%"
+          fontFamily="Quicksand"
         />
         {/* <Input
           value={userPassword}
@@ -147,6 +158,7 @@ export const AuthScreen = ({
           width="100%"
           isLoading={loading}
           isDisabled={!consent}
+          fontFamily="Quicksand"
         >
           {authenticationType}
         </Button>
@@ -160,7 +172,7 @@ export const AuthScreen = ({
             }}
             value={String(consent)}
           />
-          <Text ml={5} fontSize={14}>
+          <Text ml={5} fontSize={14} fontFamily="Quicksand">
             By using this chatbot, you agree to your data being used for
             research purposes and for receiving future email updates about this
             chatbot.

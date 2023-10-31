@@ -1,14 +1,9 @@
 import "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
 import { NativeBaseProvider, extendTheme } from "native-base";
-import {
-  NavigationContainer,
-  getFocusedRouteNameFromRoute,
-} from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BodhiBot } from "./screens/BodhiBot";
-import { colors } from "./utils/colors";
-import { ResourcesScreen } from "./screens/ResourcesScreen";
 import { AuthScreen } from "./screens/AuthScreen";
 import { ProfileScreen } from "./screens/ProfileScreen";
 import { getData } from "./helpers/auth/getData";
@@ -17,6 +12,8 @@ import { MeditationRoom } from "./screens/MeditationRoom";
 import { useFonts } from "expo-font";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Image, Keyboard, LogBox } from "react-native";
+import { ContactScreen } from "./screens/ContactScreen";
+import { OnBoardingScreen } from "./screens/OnBoardingScreen";
 
 const config = {
   useSystemColorMode: false,
@@ -31,6 +28,8 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   LogBox.ignoreAllLogs(true);
   const [userEmail, setUserEmail] = useState("");
+  const [fetchedEmail, setFetchedEmail] = useState("");
+  const [status, setStatus] = useState<"auth" | "app" | "onboarding">("auth");
   const [fontsLoaded] = useFonts({
     Quicksand: require("./assets/fonts/Quicksand.ttf"),
     QuicksandBold: require("./assets/fonts/Quicksand-Bold.ttf"),
@@ -38,12 +37,19 @@ export default function App() {
   });
 
   useEffect(() => {
-    getData("user", setUserEmail);
+    getData("user", setFetchedEmail);
   }, []);
+
+  useEffect(() => {
+    if (fetchedEmail) {
+      setStatus("app");
+    }
+  }, [fetchedEmail]);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NativeBaseProvider theme={theme}>
-        {userEmail ? (
+        {status === "app" ? (
           <NavigationContainer>
             <Tab.Navigator
               screenOptions={({ route }) => ({
@@ -74,7 +80,7 @@ export default function App() {
                         style={{ width: 23, height: 23, resizeMode: "contain" }}
                       />
                     );
-                  } else if (route.name === "Resources") {
+                  } else if (route.name === "Contact") {
                     return (
                       <Image
                         source={require("./assets/resources-logo.png")}
@@ -84,7 +90,7 @@ export default function App() {
                   } else if (route.name === "Profile") {
                     return (
                       <Image
-                        source={require("./assets/home-logo.png")}
+                        source={require("./assets/profile.png")}
                         style={{ width: 25, height: 25 }}
                       />
                     );
@@ -101,32 +107,42 @@ export default function App() {
               <Tab.Screen
                 name="Path"
                 children={(props) => (
-                  <PathScreen {...props} userEmail={userEmail} />
+                  <PathScreen {...props} userEmail={fetchedEmail} />
                 )}
               />
               <Tab.Screen
                 name="BodhiBot"
                 children={(props) => (
-                  <BodhiBot {...props} userEmail={userEmail} />
+                  <BodhiBot {...props} userEmail={fetchedEmail} />
                 )}
               />
-              <Tab.Screen name="Meditation" component={MeditationRoom} />
               <Tab.Screen
-                name="Resources"
+                name="Meditation"
+                children={(props) => (
+                  <MeditationRoom {...props} userEmail={fetchedEmail} />
+                )}
+              />
+              <Tab.Screen
+                name="Contact"
                 component={(props: any) => (
-                  <ResourcesScreen {...props} userEmail={userEmail} />
+                  <ContactScreen {...props} userEmail={fetchedEmail} />
                 )}
               />
               <Tab.Screen
                 name="Profile"
                 component={(props: any) => (
-                  <ProfileScreen {...props} userEmail={userEmail} />
+                  <ProfileScreen {...props} userEmail={fetchedEmail} />
                 )}
               />
             </Tab.Navigator>
           </NavigationContainer>
+        ) : status === "auth" ? (
+          <AuthScreen setUser={setUserEmail} setStatus={setStatus} />
         ) : (
-          <AuthScreen setUser={setUserEmail} />
+          <OnBoardingScreen
+            setFetchedEmail={setFetchedEmail}
+            userEmail={userEmail}
+          />
         )}
       </NativeBaseProvider>
     </GestureHandlerRootView>

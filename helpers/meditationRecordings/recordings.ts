@@ -1,24 +1,24 @@
 export const recordings = [
-  // {
-  //   stage: 0,
-  //   timeline: [
-  //     {
-  //       name: "Introduction",
-  //       link: "https://firebasestorage.googleapis.com/v0/b/weather112.appspot.com/o/stage%200%2F5%20min%20intro.m4a?alt=media&token=40520c10-5df1-4b72-839d-f0255ffc9f0a",
-  //     },
-  //     {
-  //       name: "Instructions part 1",
-  //       link: "https://firebasestorage.googleapis.com/v0/b/weather112.appspot.com/o/stage%200%2F5%20min%20instructions%20pt%201.m4a?alt=media&token=f63899d1-e1e6-4ca8-b8f7-cc3e95351895",
-  //     },
-  //     {
-  //       name: "Instructions part 2",
-  //       link: "https://firebasestorage.googleapis.com/v0/b/weather112.appspot.com/o/stage%200%2F5%20min%20instructions%20pt%202.m4a?alt=media&token=f67241cb-7bbb-40bf-919f-e6c7bf4ebfa9",
-  //     },
-  //     {
-  //       name: "silence",
-  //     },
-  //   ],
-  // },
+  {
+    stage: 0,
+    timeline: [
+      {
+        name: "Introduction",
+        link: "https://firebasestorage.googleapis.com/v0/b/weather112.appspot.com/o/stage%200%2F5%20min%20intro.m4a?alt=media&token=40520c10-5df1-4b72-839d-f0255ffc9f0a",
+      },
+      {
+        name: "Instructions part 1",
+        link: "https://firebasestorage.googleapis.com/v0/b/weather112.appspot.com/o/stage%200%2F5%20min%20instructions%20pt%201.m4a?alt=media&token=f63899d1-e1e6-4ca8-b8f7-cc3e95351895",
+      },
+      {
+        name: "Instructions part 2",
+        link: "https://firebasestorage.googleapis.com/v0/b/weather112.appspot.com/o/stage%200%2F5%20min%20instructions%20pt%202.m4a?alt=media&token=f67241cb-7bbb-40bf-919f-e6c7bf4ebfa9",
+      },
+      {
+        name: "silence",
+      },
+    ],
+  },
   {
     stage: 1,
     timeline: [

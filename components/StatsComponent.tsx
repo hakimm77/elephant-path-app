@@ -2,8 +2,8 @@ import { Flex, Text } from "native-base";
 import React from "react";
 
 export const StatsComponent: React.FC<{
-  stat: { name: string; value: number };
-}> = ({ stat }) => {
+  stage: number | null;
+}> = ({ stage }) => {
   return (
     <Flex
       flexDir="row"
@@ -16,9 +16,7 @@ export const StatsComponent: React.FC<{
       alignItems="center"
       mx={3}
     >
-      <Text color="#fff">
-        {stat.name}: {String(stat.value)}
-      </Text>
+      <Text color="#fff">Stage: {String(stage)}</Text>
     </Flex>
   );
 };

@@ -1,8 +1,6 @@
 import { StyleSheet, Text } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Animated } from "react-native";
-import { View } from "native-base";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Spinner, View } from "native-base";
 import { StageComponent } from "../components/StageComponent";
 import { handleStageIdentification } from "../helpers/handleStageIdentification";
 
@@ -68,18 +66,24 @@ export const PathScreen: React.FC<{ userEmail: string; navigation: any }> = ({
   ]);
 
   useEffect(() => {
-    handleStageIdentification(setCurrentStage);
+    handleStageIdentification(setCurrentStage, userEmail);
   }, []);
+
   return (
     <View style={styles.container}>
-      {stages.map((stage, index) => (
-        <StageComponent
-          stage={stage}
-          index={index}
-          currentStage={currentStage}
-          navigation={navigation}
-        />
-      ))}
+      {!currentStage ? (
+        <Spinner size="xl" color="#1d1d1d" mb={3} />
+      ) : (
+        stages.map((stage, index) => (
+          <StageComponent
+            stage={stage}
+            index={index}
+            currentStage={currentStage}
+            navigation={navigation}
+            userEmail={userEmail}
+          />
+        ))
+      )}
     </View>
   );
 };
