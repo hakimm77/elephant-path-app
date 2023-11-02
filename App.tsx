@@ -105,15 +105,15 @@ export default function App() {
               })}
             >
               <Tab.Screen
-                name="Path"
-                children={(props) => (
-                  <PathScreen {...props} userEmail={fetchedEmail} />
-                )}
-              />
-              <Tab.Screen
                 name="BodhiBot"
                 children={(props) => (
                   <BodhiBot {...props} userEmail={fetchedEmail} />
+                )}
+              />
+              <Tab.Screen
+                name="Path"
+                children={(props) => (
+                  <PathScreen {...props} userEmail={fetchedEmail} />
                 )}
               />
               <Tab.Screen

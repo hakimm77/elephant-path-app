@@ -26,7 +26,12 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   userEmail,
   route,
 }) => {
-  const [conversation, setConversation] = useState<IConversation[]>([]);
+  const [conversation, setConversation] = useState<IConversation[]>([
+    {
+      role: "assistant",
+      content: `Welcome to your customized interactive meditation journey! I'm here to help you make efficient and meaningful progress in your meditation practice. Let's get started by understanding your goals. What are you hoping to achieve with meditation?`,
+    },
+  ]);
   const [userInput, setUserInput] = useState("");
   const [loadingReponse, setLoadingResponse] = useState(false);
   const [gotChat, setGotChat] = useState(false);

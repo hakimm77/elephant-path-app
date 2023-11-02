@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ImageBackground, Text, View } from "react-native";
-import { Flex, Button } from "native-base";
+import { Flex, Button, Input } from "native-base";
 import Slider from "@react-native-community/slider";
 import AudioPlayer from "../components/AudioPlayer";
 import { handleStageIdentification } from "../helpers/handleStageIdentification";
@@ -17,6 +17,7 @@ export const MeditationRoom: React.FC<{ navigation: any; userEmail: any }> = ({
   );
   const [audioLength, setAudioLength] = useState(5); // Default length
   const [stage, setStage] = useState(null);
+  const [specification, setSpecification] = useState("");
 
   const startMeditation = () => {
     if (stage) {
@@ -67,6 +68,25 @@ export const MeditationRoom: React.FC<{ navigation: any; userEmail: any }> = ({
       >
         {pageStatus === "select" && (
           <>
+            {/* <Text
+              style={{
+                fontSize: 25,
+                fontFamily: "QuicksandBold",
+                color: "#1d1d1d",
+                alignSelf: "center",
+                marginBottom: 10,
+              }}
+            >
+              Specifications
+            </Text>
+            <Input
+              placeholder="purpose of this sit (optional)"
+              backgroundColor="#fff"
+              mb={5}
+              value={specification}
+              onChangeText={(text) => setSpecification(text)}
+            /> */}
+
             <Text
               style={{
                 fontSize: 25,
@@ -119,6 +139,7 @@ export const MeditationRoom: React.FC<{ navigation: any; userEmail: any }> = ({
               duration={audioLength}
               stage={stage ?? 1}
               NoWords={false}
+              specification={specification}
             />
           </>
         )}

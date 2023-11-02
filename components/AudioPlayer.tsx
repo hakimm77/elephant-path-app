@@ -12,7 +12,8 @@ const AudioPlayer: React.FC<{
   stage: number;
   setPageStatus: any;
   NoWords: boolean;
-}> = ({ duration, stage, setPageStatus, NoWords }) => {
+  specification: string;
+}> = ({ duration, stage, setPageStatus, NoWords, specification }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [playbackFinished, setPlaybackFinished] = useState(false);
@@ -21,7 +22,9 @@ const AudioPlayer: React.FC<{
   const [sound, setSound] = useState<any>(null);
   const [recordingIndex, setRecordingIndex] = useState(0);
   const [silenceLength, setSilenceLength] = useState(0);
-  const stageIndex = duration < 13 ? 0 : stage - 1;
+  const recordingsTimeline = specification
+    ? recordings[duration < 13 ? 0 : stage - 1]
+    : recordings[duration < 13 ? 0 : stage - 1];
 
   const seekToPosition = async (value: number) => {
     if (sound) {
@@ -43,19 +46,19 @@ const AudioPlayer: React.FC<{
     }
   };
 
-  const getAllDurations = async (recordingsTimeline: any) => {
-    const promises = recordingsTimeline
+  const getAllDurations = async (timeline: any) => {
+    const promises = timeline
       .filter((recording: any) => recording.link)
       .map((recording: any) => getAudioDuration(recording.link));
     return await Promise.all(promises);
   };
 
   async function loadAndPlaySound(recordingIndex: number) {
-    if (recordings[stageIndex].timeline.length > recordingIndex) {
-      if (recordings[stageIndex].timeline[recordingIndex].link) {
+    if (recordingsTimeline.timeline.length > recordingIndex) {
+      if (recordingsTimeline.timeline[recordingIndex].link) {
         const { sound: newSound } = await Audio.Sound.createAsync(
           {
-            uri: recordings[stageIndex].timeline[recordingIndex].link as string,
+            uri: recordingsTimeline.timeline[recordingIndex].link as string,
           },
           { shouldPlay: true }
         );
@@ -69,7 +72,7 @@ const AudioPlayer: React.FC<{
         setTimeout(() => {
           let nextRecordingIndex = recordingIndex + 1;
 
-          if (nextRecordingIndex > recordings[stageIndex].timeline.length - 1) {
+          if (nextRecordingIndex > recordingsTimeline.timeline.length - 1) {
             setIsPlaying(false);
             setPlaybackFinished(true);
             setIsLoading(false);
@@ -86,9 +89,7 @@ const AudioPlayer: React.FC<{
 
   useEffect(() => {
     const fetchDurations = async () => {
-      const allDurations = await getAllDurations(
-        recordings[stageIndex].timeline
-      );
+      const allDurations = await getAllDurations(recordingsTimeline.timeline);
 
       let total = 0;
       for (var i in allDurations) {
@@ -121,7 +122,7 @@ const AudioPlayer: React.FC<{
           setSoundDuration(status.durationMillis || 1);
 
           if (status.didJustFinish) {
-            if (recordingIndex < recordings[stageIndex].timeline.length - 1) {
+            if (recordingIndex < recordingsTimeline.timeline.length - 1) {
               await sound.unloadAsync();
               setSound(null);
               setIsPlaying(false);
@@ -165,7 +166,7 @@ const AudioPlayer: React.FC<{
       <View style={styles.controls}>
         {isLoading ? (
           <ActivityIndicator size="large" color="#1d1d1d" />
-        ) : recordings[stageIndex].timeline[recordingIndex].link ? (
+        ) : recordingsTimeline.timeline[recordingIndex].link ? (
           <>
             <View style={styles.playbackControls}>
               <Slider
