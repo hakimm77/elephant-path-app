@@ -6,14 +6,15 @@ import { recordings } from "../helpers/meditationRecordings/recordings";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Flex } from "native-base";
 import Slider from "@react-native-community/slider";
+import { noWords } from "../helpers/meditationRecordings/noWords";
 
 const AudioPlayer: React.FC<{
   duration: number;
   stage: number;
   setPageStatus: any;
-  NoWords: boolean;
+  isNoWords: boolean;
   specification: string;
-}> = ({ duration, stage, setPageStatus, NoWords, specification }) => {
+}> = ({ duration, stage, setPageStatus, isNoWords, specification }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [playbackFinished, setPlaybackFinished] = useState(false);
@@ -21,9 +22,9 @@ const AudioPlayer: React.FC<{
   const [soundDuration, setSoundDuration] = useState(1);
   const [sound, setSound] = useState<any>(null);
   const [recordingIndex, setRecordingIndex] = useState(0);
-  const [silenceLength, setSilenceLength] = useState(0);
-  const recordingsTimeline = specification
-    ? recordings[duration < 13 ? 0 : stage - 1]
+  const [silenceLength, setSilenceLength] = useState(duration * 60 * 1000);
+  const recordingsTimeline = isNoWords
+    ? noWords
     : recordings[duration < 13 ? 0 : stage - 1];
 
   const seekToPosition = async (value: number) => {
@@ -54,6 +55,27 @@ const AudioPlayer: React.FC<{
   };
 
   async function loadAndPlaySound(recordingIndex: number) {
+    if (recordingsTimeline.timeline.length === 1) {
+      setSound(null);
+      setIsPlaying(true);
+      setIsLoading(false);
+
+      setTimeout(() => {
+        console.log("timout");
+        let nextRecordingIndex = recordingIndex + 1;
+
+        if (nextRecordingIndex > recordingsTimeline.timeline.length - 1) {
+          setIsPlaying(false);
+          setPlaybackFinished(true);
+          setIsLoading(false);
+        } else {
+          setIsPlaying(true);
+          setIsLoading(false);
+          setRecordingIndex(nextRecordingIndex);
+          loadAndPlaySound(nextRecordingIndex);
+        }
+      }, silenceLength);
+    }
     if (recordingsTimeline.timeline.length > recordingIndex) {
       if (recordingsTimeline.timeline[recordingIndex].link) {
         const { sound: newSound } = await Audio.Sound.createAsync(
@@ -70,6 +92,7 @@ const AudioPlayer: React.FC<{
         setSound(null);
 
         setTimeout(() => {
+          console.log("timout2");
           let nextRecordingIndex = recordingIndex + 1;
 
           if (nextRecordingIndex > recordingsTimeline.timeline.length - 1) {
@@ -89,16 +112,15 @@ const AudioPlayer: React.FC<{
 
   useEffect(() => {
     const fetchDurations = async () => {
-      const allDurations = await getAllDurations(recordingsTimeline.timeline);
+      if (!isNoWords) {
+        const allDurations = await getAllDurations(recordingsTimeline.timeline);
 
-      let total = 0;
-      for (var i in allDurations) {
-        total += allDurations[i];
+        let total = 0;
+        for (var i in allDurations) {
+          total += allDurations[i];
+        }
+        setSilenceLength(duration * 60 * 1000 - total);
       }
-
-      console.log("silence duration should be: ", duration * 60 * 1000 - total);
-
-      setSilenceLength(duration * 60 * 1000 - total);
     };
 
     fetchDurations();
@@ -157,6 +179,7 @@ const AudioPlayer: React.FC<{
 
   useEffect(() => {
     if (playbackFinished) {
+      console.log("playback finished");
       setPageStatus("finished");
     }
   }, [playbackFinished]);

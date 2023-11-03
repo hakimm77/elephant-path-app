@@ -37,6 +37,21 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   const [gotChat, setGotChat] = useState(false);
   const scrollViewRef = useRef<ScrollViewType>(null);
   const lesson = route.params?.lesson ?? "";
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+
+  useEffect(() => {
+    const showListener = Keyboard.addListener("keyboardDidShow", (e) => {
+      setKeyboardOffset(e.endCoordinates.height);
+    });
+    const hideListener = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardOffset(0);
+    });
+
+    return () => {
+      showListener.remove();
+      hideListener.remove();
+    };
+  }, []);
 
   const handleSubmit = async (input?: string) => {
     if (input) {
@@ -96,102 +111,102 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
       style={{ flex: 1, paddingTop: 20 }}
       imageStyle={{ opacity: 0.7 }}
     >
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-      >
-        <ScrollView p={4} ref={scrollViewRef}>
-          <VStack justifyContent="center" alignItems="center" pb={5} mt={10}>
-            {conversation.length === 0 && !conversation ? (
-              <Text
-                fontSize="xl"
-                fontWeight="bold"
-                color="gray.500"
-                alignSelf="center"
+      <ScrollView p={4} ref={scrollViewRef}>
+        <VStack justifyContent="center" alignItems="center" pb={5} mt={10}>
+          {conversation.length === 0 && !conversation ? (
+            <Text
+              fontSize="xl"
+              fontWeight="bold"
+              color="gray.500"
+              alignSelf="center"
+            >
+              BodhiBot
+            </Text>
+          ) : (
+            conversation &&
+            conversation.map((message, index) => (
+              <Flex
+                key={index}
+                flexDir="column"
+                w="fit-content"
+                maxW={"70%"}
+                p={2}
+                mb={3}
+                alignSelf={
+                  message.role === "assistant" ? "flex-start" : "flex-end"
+                }
+                borderRadius={10}
+                bgColor={message.role === "assistant" ? "#fff" : "#096c7d"}
+                borderWidth={1}
+                borderColor="#000"
               >
-                BodhiBot
-              </Text>
-            ) : (
-              conversation &&
-              conversation.map((message, index) => (
-                <Flex
-                  key={index}
-                  flexDir="column"
-                  w="fit-content"
-                  maxW={"70%"}
-                  p={2}
-                  mb={3}
-                  alignSelf={
-                    message.role === "assistant" ? "flex-start" : "flex-end"
-                  }
-                  borderRadius={10}
-                  bgColor={message.role === "assistant" ? "#fff" : "#096c7d"}
-                  borderWidth={1}
-                  borderColor="#000"
-                >
-                  {message.content === "0L1o2a3d4i5n6g7" ? (
-                    <Flex flexDir="row" alignItems="center">
-                      <Spinner color="#444654" size={"sm"} />
-                      <Text ml={2}>Thinking...</Text>
-                    </Flex>
-                  ) : (
-                    <Flex fontSize={15} w="100%">
-                      <Text
-                        style={{
-                          color:
-                            message.role === "assistant" ? "#444654" : "#fff",
-                          fontFamily: "Quicksand",
-                        }}
-                      >
-                        {message.content}
-                      </Text>
-                    </Flex>
-                  )}
-                </Flex>
-              ))
-            )}
-          </VStack>
-        </ScrollView>
+                {message.content === "0L1o2a3d4i5n6g7" ? (
+                  <Flex flexDir="row" alignItems="center">
+                    <Spinner color="#444654" size={"sm"} />
+                    <Text ml={2}>Thinking...</Text>
+                  </Flex>
+                ) : (
+                  <Flex fontSize={15} w="100%">
+                    <Text
+                      style={{
+                        color:
+                          message.role === "assistant" ? "#444654" : "#fff",
+                        fontFamily: "Quicksand",
+                      }}
+                    >
+                      {message.content}
+                    </Text>
+                  </Flex>
+                )}
+              </Flex>
+            ))
+          )}
+        </VStack>
+      </ScrollView>
 
-        <Flex flexDirection="row" alignItems="center" p={2}>
-          <Input
-            flex={1}
-            placeholder="Type your message..."
-            placeholderTextColor={"#1d1d1d"}
-            value={userInput}
-            onChangeText={(text: string) => setUserInput(text)}
-            isDisabled={loadingReponse}
-            style={{
-              flex: 1,
-              backgroundColor: "#fff",
-              paddingLeft: 10,
-              borderRadius: 30,
-              borderColor: "#096c7d",
-              borderWidth: 1,
-              color: "#1d1d1d",
-              fontFamily: "Quicksand",
-              elevation: 0, // remove shadow for Android
-              shadowColor: "transparent",
-            }}
-          />
-          <Button
-            ml={2}
-            onPress={() => {
-              handleSubmit(userInput);
-            }}
-            isLoading={loadingReponse}
-            style={{
-              backgroundColor: "#096c7d",
-              width: 45,
-              height: 45,
-              borderRadius: 10,
-            }}
-          >
-            <Icon name="send" style={{ margin: 0 }} size={20} color="#fff" />
-          </Button>
-        </Flex>
-      </KeyboardAvoidingView>
+      <Flex
+        position="absolute"
+        bottom={Platform.OS === "ios" ? keyboardOffset : 0}
+        flexDirection="row"
+        alignItems="center"
+        p={2}
+      >
+        <Input
+          flex={1}
+          placeholder="Type your message..."
+          placeholderTextColor={"#1d1d1d"}
+          value={userInput}
+          onChangeText={(text: string) => setUserInput(text)}
+          isDisabled={loadingReponse}
+          style={{
+            flex: 1,
+            backgroundColor: "#fff",
+            paddingLeft: 10,
+            borderRadius: 30,
+            borderColor: "#096c7d",
+            borderWidth: 1,
+            color: "#1d1d1d",
+            fontFamily: "Quicksand",
+            elevation: 0, // remove shadow for Android
+            shadowColor: "transparent",
+          }}
+        />
+        <Button
+          ml={2}
+          onPress={() => {
+            handleSubmit(userInput);
+          }}
+          isLoading={loadingReponse}
+          style={{
+            backgroundColor: "#096c7d",
+            width: 45,
+            height: 45,
+            borderRadius: 10,
+          }}
+        >
+          <Icon name="send" style={{ margin: 0 }} size={20} color="#fff" />
+        </Button>
+      </Flex>
     </ImageBackground>
   );
 };
