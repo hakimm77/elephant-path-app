@@ -26,7 +26,6 @@ const theme = extendTheme({
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  LogBox.ignoreAllLogs(true);
   const [userEmail, setUserEmail] = useState("");
   const [fetchedEmail, setFetchedEmail] = useState("");
   const [status, setStatus] = useState<"auth" | "app" | "onboarding">("auth");
