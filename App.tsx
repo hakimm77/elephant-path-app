@@ -11,7 +11,7 @@ import { PathScreen } from "./screens/PathScreen";
 import { MeditationRoom } from "./screens/MeditationRoom";
 import { useFonts } from "expo-font";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Image, Keyboard, LogBox } from "react-native";
+import { Image, Keyboard, LogBox, Text, View } from "react-native";
 import { ContactScreen } from "./screens/ContactScreen";
 import { OnBoardingScreen } from "./screens/OnBoardingScreen";
 
@@ -26,6 +26,7 @@ const theme = extendTheme({
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  LogBox.ignoreAllLogs();
   const [userEmail, setUserEmail] = useState("");
   const [fetchedEmail, setFetchedEmail] = useState("");
   const [status, setStatus] = useState<"auth" | "app" | "onboarding">("auth");

@@ -3,7 +3,7 @@ export default {
     owner: "hakimm77",
     name: "Eelephant Path",
     slug: "elephant-path",
-    version: "1.0.0",
+    version: "1.0.4",
     orientation: "portrait",
     icon: "./assets/logo.png",
     splash: {
