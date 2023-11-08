@@ -64,6 +64,7 @@
     "react-native-web": "~0.19.6",
     "react-native-webview": "13.2.2",
     "react-native-youtube-iframe": "^2.3.0",
+    "text-encoding": "^0.7.0",
     "web-streams-polyfill": "^3.2.1"
   },
   "devDependencies": {
