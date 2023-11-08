@@ -1,3 +1,4 @@
+import 'react-native-polyfill-globals/auto';
 import "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
 import { NativeBaseProvider, extendTheme } from "native-base";
