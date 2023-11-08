@@ -1,6 +1,6 @@
 import { Audio } from "expo-av";
 import { Button, Flex } from "native-base";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -9,13 +9,27 @@ export const FinishedComponent: React.FC<{
   audioLength: number;
   setPageStatus: any;
 }> = ({ redirectToBot, audioLength, setPageStatus }) => {
-  useEffect(() => {
-    Audio.Sound.createAsync(
+  const [sound, setSound] = useState<any>(null);
+
+  let loadSound = async () => {
+    const { sound: newSound } = await Audio.Sound.createAsync(
       {
         uri: "https://firebasestorage.googleapis.com/v0/b/weather112.appspot.com/o/singing-bowl_23042017-01-raw-71015.mp3?alt=media&token=ca09e1cf-11ad-4422-a41b-600c606b3f1c",
       },
       { shouldPlay: true }
     );
+
+    setSound(newSound);
+  };
+
+  useEffect(() => {
+    loadSound();
+
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
   }, []);
 
   return (

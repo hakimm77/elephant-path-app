@@ -14,7 +14,7 @@ export const MeditationRoom: React.FC<{ navigation: any; userEmail: any }> = ({
   userEmail,
 }) => {
   const [pageStatus, setPageStatus] = useState<"select" | "audio" | "finished">(
-    "finished"
+    "select"
   );
   const [audioLength, setAudioLength] = useState(5); // Default length
   const [stage, setStage] = useState(null);
