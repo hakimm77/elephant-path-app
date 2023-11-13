@@ -15,7 +15,7 @@ export const OnBoardingScreen: React.FC<{
   };
 
   return (
-    <Flex flex={1} p={5} backgroundColor={"#75c3db"}>
+    <Flex flex={1} p={5} backgroundColor={"#fbde9a"}>
       <WebView
         style={{
           margin: 0,
@@ -52,7 +52,10 @@ export const OnBoardingScreen: React.FC<{
         path to enhance your focus and relief stress.
       </Text>
 
-      <Button style={{ marginTop: 40 }} onPress={proceedToApp}>
+      <Button
+        style={{ marginTop: 40, backgroundColor: "#852f3b" }}
+        onPress={proceedToApp}
+      >
         Proceed to the app
       </Button>
     </Flex>

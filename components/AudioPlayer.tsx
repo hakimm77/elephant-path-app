@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { Flex } from "native-base";
 import Slider from "@react-native-community/slider";
 import { noWords } from "../helpers/meditationRecordings/noWords";
+import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 
 const AudioPlayer: React.FC<{
   duration: number;
@@ -111,6 +112,10 @@ const AudioPlayer: React.FC<{
   }
 
   useEffect(() => {
+    activateKeepAwake();
+  }, []);
+
+  useEffect(() => {
     const fetchDurations = async () => {
       if (!isNoWords) {
         const allDurations = await getAllDurations(recordingsTimeline.timeline);
@@ -180,6 +185,7 @@ const AudioPlayer: React.FC<{
   useEffect(() => {
     if (playbackFinished) {
       console.log("playback finished");
+      deactivateKeepAwake();
       setPageStatus("finished");
     }
   }, [playbackFinished]);

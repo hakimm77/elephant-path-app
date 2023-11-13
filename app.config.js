@@ -1,9 +1,9 @@
 export default {
   expo: {
     owner: "hakimm77",
-    name: "Eelephant Path",
+    name: "Frid: A Journey Awaits",
     slug: "elephant-path",
-    version: "1.0.4",
+    version: "1.0.8",
     orientation: "portrait",
     icon: "./assets/logo.png",
     splash: {
@@ -20,10 +20,10 @@ export default {
     assetBundlePatterns: ["**/*"],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: "com.elephantpath.app",
+      bundleIdentifier: "com.fridmeditation.frid",
     },
     android: {
-      package: "com.elephantpath.app",
+      package: "com.fridmeditation.frid",
       adaptiveIcon: {
         foregroundImage: "./assets/logo.png",
         backgroundColor: "#FFFFFF",

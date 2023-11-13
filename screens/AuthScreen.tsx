@@ -17,6 +17,7 @@ import {
 import { auth } from "../helpers/auth/firebaseConfig";
 import { FontAwesome } from "@expo/vector-icons";
 import { storeData } from "../helpers/auth/storeData";
+import { ImageBackground } from "react-native";
 
 export const AuthScreen = ({
   setUser,
@@ -100,14 +101,23 @@ export const AuthScreen = ({
   // }, [user]);
 
   return (
-    <Flex
-      flex={1}
-      bg="white"
-      alignItems="center"
-      justifyContent="center"
-      backgroundColor="#75c3db"
+    <ImageBackground
+      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+      source={require("../assets/auth-image.png")}
+      imageStyle={{}}
     >
-      <VStack space={4} width="80%">
+      <VStack
+        space={4}
+        width="85%"
+        style={{
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          padding: 20,
+          borderRadius: 10,
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 20,
+        }}
+      >
         {/* <Text fontSize="2xl">Google Sign in</Text>
 
         <Button
@@ -172,13 +182,13 @@ export const AuthScreen = ({
             }}
             value={String(consent)}
           />
-          <Text ml={5} fontSize={14} fontFamily="Quicksand">
+          <Text ml={2} fontSize={12} fontFamily="Quicksand">
             By using this chatbot, you agree to your data being used for
             research purposes and for receiving future email updates about this
             chatbot.
           </Text>
         </Flex>
       </VStack>
-    </Flex>
+    </ImageBackground>
   );
 };

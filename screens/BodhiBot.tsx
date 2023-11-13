@@ -73,7 +73,9 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
         ],
         setConversation,
         setLoadingResponse
-      );
+      ).then(() => {
+        handleSaveChat(userEmail, conversation);
+      });
     }
   };
 
@@ -86,9 +88,10 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   }, [conversation, Keyboard]);
 
   useEffect(() => {
-    if (conversation.length === 0) {
-      handleGetChat(userEmail, setConversation).then(() => {
+    if (conversation.length < 2) {
+      handleGetChat(userEmail, setConversation).then(async () => {
         setGotChat(true);
+        await handleSaveChat(userEmail, conversation);
       });
     }
   }, []);
@@ -100,7 +103,7 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   }, [lesson]);
 
   useEffect(() => {
-    if (conversation && conversation.length > 0) {
+    if (conversation && conversation.length > 1) {
       handleSaveChat(userEmail, conversation);
     }
   }, [conversation]);
@@ -112,7 +115,7 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
       imageStyle={{ opacity: 0.7 }}
     >
       <ScrollView p={4} ref={scrollViewRef}>
-        <VStack justifyContent="center" alignItems="center" pb={5} mt={10}>
+        <VStack justifyContent="center" alignItems="center" pb={20} mt={10}>
           {conversation.length === 0 && !conversation ? (
             <Text
               fontSize="xl"

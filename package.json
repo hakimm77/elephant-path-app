@@ -43,6 +43,7 @@
     "expo-constants": "~14.4.2",
     "expo-file-system": "~15.4.4",
     "expo-font": "~11.4.0",
+    "expo-keep-awake": "~12.3.0",
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
     "expo-updates": "~0.18.17",
