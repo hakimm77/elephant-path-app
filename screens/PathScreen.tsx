@@ -1,8 +1,8 @@
-import { StyleSheet, Text } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
-import { Spinner, View } from "native-base";
+import { StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View } from "native-base";
 import { StageComponent } from "../components/StageComponent";
-import { handleStageIdentification } from "../helpers/handleStageIdentification";
+import { getData } from "../helpers/auth/getData";
 
 export const PathScreen: React.FC<{ userEmail: string; navigation: any }> = ({
   userEmail,
@@ -61,29 +61,29 @@ export const PathScreen: React.FC<{ userEmail: string; navigation: any }> = ({
         "Reduced resistance to sitting",
         "Consistent routine",
       ],
-      links: ["6 point preparation", "4 stage transition"],
+      links: [
+        "6 point preparation",
+        "4 stage transition",
+        "Attention vs Awareness",
+      ],
     },
   ]);
 
   useEffect(() => {
-    handleStageIdentification(setCurrentStage, userEmail);
+    getData("stage", setCurrentStage);
   }, []);
 
   return (
     <View style={styles.container}>
-      {!currentStage ? (
-        <Spinner size="xl" color="#1d1d1d" mb={3} />
-      ) : (
-        stages.map((stage, index) => (
-          <StageComponent
-            stage={stage}
-            index={index}
-            currentStage={currentStage}
-            navigation={navigation}
-            userEmail={userEmail}
-          />
-        ))
-      )}
+      {stages.map((stage, index) => (
+        <StageComponent
+          stage={stage}
+          index={index}
+          currentStage={currentStage ?? 1}
+          navigation={navigation}
+          userEmail={userEmail}
+        />
+      ))}
     </View>
   );
 };

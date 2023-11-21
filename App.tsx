@@ -15,6 +15,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Image, Keyboard, LogBox, Text, View } from "react-native";
 import { ContactScreen } from "./screens/ContactScreen";
 import { OnBoardingScreen } from "./screens/OnBoardingScreen";
+import { handleStageIdentification } from "./helpers/handleStageIdentification";
 
 const config = {
   useSystemColorMode: false,
@@ -44,6 +45,12 @@ export default function App() {
   useEffect(() => {
     if (fetchedEmail) {
       setStatus("app");
+    }
+  }, [fetchedEmail]);
+
+  useEffect(() => {
+    if (fetchedEmail) {
+      handleStageIdentification(fetchedEmail);
     }
   }, [fetchedEmail]);
 

@@ -6,17 +6,11 @@ import {
   Input,
   Button,
   VStack,
-  Box,
   Spinner,
 } from "native-base";
 import { IConversation } from "../utils/types";
 import { handleChat } from "../helpers/apiHandlers/handleChat";
-import {
-  ImageBackground,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { ImageBackground, Keyboard, Platform } from "react-native";
 import type { ScrollView as ScrollViewType } from "react-native";
 import { handleGetChat } from "../helpers/apiHandlers/handleGetChat";
 import { handleSaveChat } from "../helpers/apiHandlers/handleSaveChat";
@@ -26,19 +20,14 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   userEmail,
   route,
 }) => {
-  const [conversation, setConversation] = useState<IConversation[]>([
-    {
-      role: "assistant",
-      content: `Welcome to your customized interactive meditation journey! I'm here to help you make efficient and meaningful progress in your meditation practice. Let's get started by understanding your goals. What are you hoping to achieve with meditation?`,
-    },
-  ]);
+  const [conversation, setConversation] = useState<IConversation[]>([]);
   const [userInput, setUserInput] = useState("");
   const [loadingReponse, setLoadingResponse] = useState(false);
   const [gotChat, setGotChat] = useState(false);
   const scrollViewRef = useRef<ScrollViewType>(null);
   const lesson = route.params?.lesson ?? "";
   const [keyboardOffset, setKeyboardOffset] = useState(0);
-
+  const [text, setText] = useState("");
   useEffect(() => {
     const showListener = Keyboard.addListener("keyboardDidShow", (e) => {
       setKeyboardOffset(e.endCoordinates.height);
@@ -73,12 +62,9 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
         ],
         setConversation,
         setLoadingResponse
-      ).then(() => {
-        handleSaveChat(userEmail, conversation);
-      });
+      );
     }
   };
-
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, []);
@@ -91,7 +77,6 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
     if (conversation.length < 2) {
       handleGetChat(userEmail, setConversation).then(async () => {
         setGotChat(true);
-        await handleSaveChat(userEmail, conversation);
       });
     }
   }, []);
@@ -103,7 +88,7 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   }, [lesson]);
 
   useEffect(() => {
-    if (conversation && conversation.length > 1) {
+    if (conversation && conversation.length > 0) {
       handleSaveChat(userEmail, conversation);
     }
   }, [conversation]);
@@ -116,6 +101,34 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
     >
       <ScrollView p={4} ref={scrollViewRef}>
         <VStack justifyContent="center" alignItems="center" pb={20} mt={10}>
+          <Flex
+            flexDir="column"
+            w="fit-content"
+            maxW={"70%"}
+            p={2}
+            mb={3}
+            alignSelf={"flex-start"}
+            borderRadius={10}
+            bgColor={"#fff"}
+            borderWidth={1}
+            borderColor="#000"
+          >
+            <Flex fontSize={15} w="100%">
+              <Text
+                style={{
+                  color: "#444654",
+                  fontFamily: "Quicksand",
+                }}
+              >
+                Welcome to your customized interactive meditation journey! I'm
+                here to help you make efficient and meaningful progress in your
+                meditation practice. Let's get started by understanding your
+                goals. The guided meditations will be tailored to your answers
+                so please take your time to answer thourougly. What are you
+                hoping to achieve with meditation?
+              </Text>
+            </Flex>
+          </Flex>
           {conversation.length === 0 && !conversation ? (
             <Text
               fontSize="xl"
@@ -146,7 +159,7 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
                 {message.content === "0L1o2a3d4i5n6g7" ? (
                   <Flex flexDir="row" alignItems="center">
                     <Spinner color="#444654" size={"sm"} />
-                    <Text ml={2}>Thinking...</Text>
+                    <Text ml={2}>{text}</Text>
                   </Flex>
                 ) : (
                   <Flex fontSize={15} w="100%">

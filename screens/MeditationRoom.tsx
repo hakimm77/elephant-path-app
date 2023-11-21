@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { ImageBackground, Text, View } from "react-native";
-import { Flex, Button, Input } from "native-base";
+import { Flex, Button } from "native-base";
 import Slider from "@react-native-community/slider";
 import AudioPlayer from "../components/AudioPlayer";
-import { handleStageIdentification } from "../helpers/handleStageIdentification";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import Icon from "react-native-vector-icons/Ionicons";
-import { Audio } from "expo-av";
 import { FinishedComponent } from "../components/FinishedComponent";
+import { getData } from "../helpers/auth/getData";
 
 export const MeditationRoom: React.FC<{ navigation: any; userEmail: any }> = ({
   navigation,
@@ -34,7 +31,7 @@ export const MeditationRoom: React.FC<{ navigation: any; userEmail: any }> = ({
   };
 
   useEffect(() => {
-    handleStageIdentification(setStage, userEmail);
+    getData("stage", setStage);
   }, []);
 
   return (
@@ -60,25 +57,6 @@ export const MeditationRoom: React.FC<{ navigation: any; userEmail: any }> = ({
       >
         {pageStatus === "select" && (
           <>
-            {/* <Text
-              style={{
-                fontSize: 25,
-                fontFamily: "QuicksandBold",
-                color: "#1d1d1d",
-                alignSelf: "center",
-                marginBottom: 10,
-              }}
-            >
-              Specifications
-            </Text>
-            <Input
-              placeholder="purpose of this sit (optional)"
-              backgroundColor="#fff"
-              mb={5}
-              value={specification}
-              onChangeText={(text) => setSpecification(text)}
-            /> */}
-
             <Text
               style={{
                 fontSize: 25,
@@ -124,7 +102,6 @@ export const MeditationRoom: React.FC<{ navigation: any; userEmail: any }> = ({
                     startMeditation(false);
                   }}
                   mb={3}
-                  isLoading={!stage}
                 >
                   Start Guided Meditation
                 </Button>
@@ -133,7 +110,6 @@ export const MeditationRoom: React.FC<{ navigation: any; userEmail: any }> = ({
                   onPress={() => {
                     startMeditation(true);
                   }}
-                  isLoading={!stage}
                 >
                   Start Silent Meditation
                 </Button>
