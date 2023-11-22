@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { StatsComponent } from "../components/StatsComponent";
 import { getData } from "../helpers/auth/getData";
+import { handleDeleteAccount } from "../helpers/auth/handleDeleteAccount";
 
 export const ProfileScreen: React.FC<{
   userEmail: string;
@@ -19,6 +20,7 @@ export const ProfileScreen: React.FC<{
 
   const handleLogout = async () => {
     await removeData("user");
+    await removeData("stage");
   };
 
   const onShare = async () => {
@@ -117,12 +119,26 @@ export const ProfileScreen: React.FC<{
       <Button
         onPress={handleLogout}
         position={"absolute"}
-        bottom={10}
+        bottom={20}
         w="70%"
         style={{ backgroundColor: "red" }}
       >
         <Text style={{ fontFamily: "Quicksand", fontSize: 18, color: "#fff" }}>
           Logout
+        </Text>
+      </Button>
+
+      <Button
+        onPress={() => {
+          handleDeleteAccount(userEmail);
+        }}
+        position={"absolute"}
+        bottom={5}
+        w="70%"
+        style={{ backgroundColor: "red" }}
+      >
+        <Text style={{ fontFamily: "Quicksand", fontSize: 18, color: "#fff" }}>
+          Delete Account
         </Text>
       </Button>
     </ImageBackground>
