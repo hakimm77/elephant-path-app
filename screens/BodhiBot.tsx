@@ -184,10 +184,14 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
         position="absolute"
         bottom={Platform.OS === "ios" ? keyboardOffset : 0}
         flexDirection="row"
-        alignItems="center"
+        alignItems="flex-end"
         p={2}
+        h={"30%"}
+        w={"100%"}
+        flex={1}
       >
         <Input
+          multiline
           flex={1}
           placeholder="Type your message..."
           placeholderTextColor={"#1d1d1d"}
