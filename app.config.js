@@ -3,7 +3,7 @@ export default {
     owner: "hakimm77",
     name: "Frid: A Journey Awaits",
     slug: "elephant-path",
-    version: "1.0.9",
+    version: "1.0.10",
     orientation: "portrait",
     icon: "./assets/logo.png",
     splash: {
