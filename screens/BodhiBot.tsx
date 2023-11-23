@@ -25,6 +25,7 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
 }) => {
   const [conversation, setConversation] = useState<IConversation[]>([]);
   const [userInput, setUserInput] = useState("");
+  const [previousUserInput, setPreviousUserInput] = useState("");
   const [loadingReponse, setLoadingResponse] = useState(false);
   const [errorResponse, setErrorResponse] = useState(false);
   const [gotChat, setGotChat] = useState(false);
@@ -32,6 +33,7 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   const lesson = route.params?.lesson ?? "";
   const [keyboardOffset, setKeyboardOffset] = useState(0);
   const [text, setText] = useState("");
+
   useEffect(() => {
     const showListener = Keyboard.addListener("keyboardDidShow", (e) => {
       setKeyboardOffset(e.endCoordinates.height);
@@ -72,7 +74,6 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
       );
     }
   };
-
   const handleRegenerate = async () => {
     // Remove error response
     conversation.pop();
@@ -94,9 +95,6 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, []);
 
-  useEffect(() => {
-    scrollViewRef.current?.scrollToEnd({ animated: true });
-  }, [conversation, Keyboard]);
 
   useEffect(() => {
     if (conversation.length < 2) {
@@ -120,6 +118,18 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   }, [conversation]);
 
   useEffect(() => {
+    setPreviousUserInput(userInput);
+  }, [userInput]);
+
+  // Add this useEffect for handling scroll when userInput changes from empty to non-empty
+  useEffect(() => {
+    if (previousUserInput === "" && userInput !== "") {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }
+  }, [userInput, previousUserInput]); // Depend on both userInput and previousUserInput
+
+  
+   useEffect(() => {
     if (errorResponse) {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }
@@ -131,7 +141,8 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
       style={{ flex: 1, paddingTop: 20 }}
       imageStyle={{ opacity: 0.7 }}
     >
-      <ScrollView p={4} ref={scrollViewRef}>
+      <ScrollView p={4} ref={scrollViewRef}
+      onContentSizeChange={()=> scrollViewRef.current?.scrollToEnd()}>
         <VStack justifyContent="center" alignItems="center" pb={20} mt={10}>
           <Flex
             flexDir="column"
