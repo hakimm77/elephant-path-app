@@ -19,10 +19,10 @@ export const MeditationRoom: React.FC<{ navigation: any; userEmail: any }> = ({
   const [noWords, setNoWords] = useState(false);
 
   const startMeditation = (silent: boolean) => {
-    if (stage) {
-      setPageStatus("audio");
-      setNoWords(silent);
-    }
+    // if (stage) {
+    setPageStatus("audio");
+    setNoWords(silent);
+    // }
   };
 
   const redirectToBot = async () => {
