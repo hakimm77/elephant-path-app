@@ -4,10 +4,11 @@ import { Audio } from "expo-av";
 import { styles } from "../styles/AudioPlayer";
 import { recordings } from "../helpers/meditationRecordings/recordings";
 import Icon from "react-native-vector-icons/Ionicons";
-import { Flex } from "native-base";
+import { Button, Flex } from "native-base";
 import Slider from "@react-native-community/slider";
 import { noWords } from "../helpers/meditationRecordings/noWords";
 import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
+import { AudioTimer } from "./AudioTimer";
 
 const AudioPlayer: React.FC<{
   duration: number;
@@ -24,16 +25,17 @@ const AudioPlayer: React.FC<{
   const [sound, setSound] = useState<any>(null);
   const [recordingIndex, setRecordingIndex] = useState(0);
   const [silenceLength, setSilenceLength] = useState(duration * 60 * 1000);
+  const [finished, setFinished] = useState(false);
   const recordingsTimeline = isNoWords
     ? noWords
     : recordings[duration < 13 ? 0 : stage - 1];
 
-  const seekToPosition = async (value: number) => {
-    if (sound) {
-      const positionMillis = value * soundDuration;
-      await sound.setPositionAsync(positionMillis);
-    }
-  };
+  // const seekToPosition = async (value: number) => {
+  //   if (sound) {
+  //     const positionMillis = value * soundDuration;
+  //     await sound.setPositionAsync(positionMillis);
+  //   }
+  // };
 
   const getAudioDuration = async (uri: string) => {
     try {
@@ -114,10 +116,9 @@ const AudioPlayer: React.FC<{
   useEffect(() => {
     activateKeepAwake();
   }, []);
-
   useEffect(() => {
-    const fetchDurations = async () => {
-      if (!isNoWords) {
+    if (!isNoWords) {
+      const fetchDurations = async () => {
         const allDurations = await getAllDurations(recordingsTimeline.timeline);
 
         let total = 0;
@@ -125,24 +126,26 @@ const AudioPlayer: React.FC<{
           total += allDurations[i];
         }
         setSilenceLength(duration * 60 * 1000 - total);
-      }
-    };
+      };
 
-    fetchDurations();
+      fetchDurations();
+    }
   }, []);
 
   useEffect(() => {
-    loadAndPlaySound(recordingIndex);
+    if (!isNoWords) {
+      loadAndPlaySound(recordingIndex);
 
-    return () => {
-      if (sound) {
-        sound.unloadAsync();
-      }
-    };
+      return () => {
+        if (sound) {
+          sound.unloadAsync();
+        }
+      };
+    }
   }, []);
 
   useEffect(() => {
-    if (sound) {
+    if (sound && !isNoWords) {
       sound.setOnPlaybackStatusUpdate(async (status: any) => {
         if (status.isLoaded) {
           setScriptProgress(status.positionMillis);
@@ -152,7 +155,6 @@ const AudioPlayer: React.FC<{
             if (recordingIndex < recordingsTimeline.timeline.length - 1) {
               await sound.unloadAsync();
               setSound(null);
-              setIsPlaying(false);
 
               let nextRecordingIndex = recordingIndex + 1;
               setRecordingIndex(nextRecordingIndex);
@@ -178,22 +180,45 @@ const AudioPlayer: React.FC<{
       } else {
         await sound.playAsync();
       }
-      setIsPlaying(!isPlaying);
     }
+
+    setIsPlaying(!isPlaying);
   };
 
   useEffect(() => {
-    if (playbackFinished) {
+    if (playbackFinished || finished) {
       console.log("playback finished");
       deactivateKeepAwake();
       setPageStatus("finished");
     }
-  }, [playbackFinished]);
+  }, [playbackFinished, finished]);
+
+  useEffect(() => {
+    console.log(recordingIndex);
+  }, [recordingIndex]);
 
   return (
     <View style={styles.container}>
       <View style={styles.controls}>
-        {isLoading ? (
+        <AudioTimer
+          setFinished={setFinished}
+          pauseStatus={isNoWords ? isPlaying : !isPlaying}
+          togglePause={togglePlayPause}
+          duration={duration * 60 * 1000}
+          finished={finished}
+        />
+        <Button
+          style={{ backgroundColor: "#fff", marginTop: 40 }}
+          onPress={async () => {
+            if (sound) {
+              await sound.stopAsync();
+            }
+            setPageStatus("select");
+          }}
+        >
+          <Text>Finish</Text>
+        </Button>
+        {/* {isLoading ? (
           <ActivityIndicator size="large" color="#1d1d1d" />
         ) : recordingsTimeline.timeline[recordingIndex].link ? (
           <>
@@ -217,9 +242,9 @@ const AudioPlayer: React.FC<{
                 <TouchableOpacity
                   onPress={async () => {
                     if (sound) {
-                      await sound.stopAsync(); // Stop the sound
+                      await sound.stopAsync();
                     }
-                    setPageStatus("select"); // Set the page status to select
+                    setPageStatus("select");
                   }}
                 >
                   <Icon name="arrow-back" size={80} color="#FFFFFF" />
@@ -245,7 +270,7 @@ const AudioPlayer: React.FC<{
           <Text style={{ color: "#fff", fontSize: 17, fontWeight: "bold" }}>
             Meditating...
           </Text>
-        )}
+        )} */}
       </View>
     </View>
   );

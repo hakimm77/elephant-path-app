@@ -109,7 +109,7 @@ export default function App() {
                 tabBarActiveTintColor: "#444654", // active icon color
                 tabBarInactiveTintColor: "gray", // inactive icon color
                 tabBarActiveBackgroundColor: "#c2e4e2",
-                tabBarInactiveBackgroundColor: "#fff8e4",
+                tabBarInactiveBackgroundColor: "#fff",
               })}
             >
               <Tab.Screen
