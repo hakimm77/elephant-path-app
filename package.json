@@ -68,6 +68,7 @@
     "react-native-sse": "^1.2.0",
     "react-native-svg": "13.9.0",
     "react-native-url-polyfill": "^2.0.0",
+    "react-native-uuid": "^2.0.1",
     "react-native-vector-icons": "^10.0.0",
     "react-native-web": "~0.19.6",
     "react-native-webview": "13.2.2",

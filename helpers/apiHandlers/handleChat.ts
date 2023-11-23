@@ -1,25 +1,41 @@
 import axios from "axios";
 import { api } from "../../utils/constants";
+import { IConversation } from "../../utils/types";
 
 export const handleChat = async (
-  messages: any,
+  messages: IConversation[],
   setConversation: any,
-  setLoadingResponse: any
+  setLoadingResponse: any,
+  setErrorResponse: any,
 ) => {
-  let conversation = [...messages];
+
+
+  const conversation = messages.map((conv) => {
+    const { id, ...rest } = conv;
+    return rest;
+  });
+
+  setErrorResponse(false);
 
   try {
     const response = await axios.post(`${api}/api/chat`, {
       conversation,
     });
-
-    setConversation((prevMessages: any) => {
+    
+    setConversation((prevMessages: IConversation[]) => {
       let updatedMessagesArr = [...prevMessages];
-      updatedMessagesArr[prevMessages.length - 1].content =
-        response.data.message;
+      updatedMessagesArr[updatedMessagesArr.length -1 ].content = response.data.message; 
       return updatedMessagesArr;
     });
-  } catch (error) {
+    
+    
+  } catch (error) { 
+    setConversation((prevMessages: IConversation[]) => {
+      let updatedMessagesArr = [...prevMessages];
+      updatedMessagesArr[updatedMessagesArr.length -1 ].content = "An error occurred. Please try again."; 
+      return updatedMessagesArr;
+    });
+    setErrorResponse(true);
     console.error("Axios error:", error);
   }
 

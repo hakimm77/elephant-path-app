@@ -15,6 +15,9 @@ import type { ScrollView as ScrollViewType } from "react-native";
 import { handleGetChat } from "../helpers/apiHandlers/handleGetChat";
 import { handleSaveChat } from "../helpers/apiHandlers/handleSaveChat";
 import Icon from "react-native-vector-icons/Ionicons";
+import { MessageComponent } from "../components/conversation/MessageComponent";
+import uuid from 'react-native-uuid';
+
 
 export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   userEmail,
@@ -24,6 +27,7 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   const [userInput, setUserInput] = useState("");
   const [previousUserInput, setPreviousUserInput] = useState("");
   const [loadingReponse, setLoadingResponse] = useState(false);
+  const [errorResponse, setErrorResponse] = useState(false);
   const [gotChat, setGotChat] = useState(false);
   const scrollViewRef = useRef<ScrollViewType>(null);
   const lesson = route.params?.lesson ?? "";
@@ -48,25 +52,48 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
     if (input) {
       Keyboard.dismiss();
       setLoadingResponse(true);
+
+      if (errorResponse) {
+        conversation.pop();
+        conversation.pop();
+      }
+
       await setConversation((previousConversation) => [
         ...previousConversation,
-        { role: "user", content: input },
-        { role: "assistant", content: "0L1o2a3d4i5n6g7" },
+        { role: "user", content: input, id: uuid.v4() },
+        { role: "assistant", content: "Loading", id: uuid.v4() },
       ]);
       scrollViewRef.current?.scrollToEnd({ animated: true });
       setUserInput("");
 
       await handleChat(
-        [
-          ...conversation,
-          { role: "user", content: input },
-          { role: "assistant", content: "0L1o2a3d4i5n6g7" },
-        ],
+        conversation,
         setConversation,
-        setLoadingResponse
+        setLoadingResponse,
+        setErrorResponse,
       );
     }
   };
+  const handleRegenerate = async () => {
+    // Remove error response
+    conversation.pop();
+    await setConversation((previousConversation) => [
+      ...previousConversation,
+      { role: "assistant", content: "Loading", id: uuid.v4() },
+    ]);
+
+    await handleChat(
+      conversation,
+      setConversation,
+      setLoadingResponse,
+      setErrorResponse,
+    );
+
+  }
+
+  useEffect(() => {
+    scrollViewRef.current?.scrollToEnd({ animated: true });
+  }, []);
 
 
   useEffect(() => {
@@ -84,6 +111,7 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   }, [lesson]);
 
   useEffect(() => {
+    console.log("conversation: ", conversation);
     if (conversation && conversation.length > 0) {
       handleSaveChat(userEmail, conversation);
     }
@@ -100,6 +128,12 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
     }
   }, [userInput, previousUserInput]); // Depend on both userInput and previousUserInput
 
+  
+   useEffect(() => {
+    if (errorResponse) {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }
+  }, [errorResponse]);
 
   return (
     <ImageBackground
@@ -149,54 +183,26 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
             </Text>
           ) : (
             conversation &&
-            conversation.map((message, index) => (
-              <Flex
-                key={index}
-                flexDir="column"
-                w="fit-content"
-                maxW={"70%"}
-                p={2}
-                mb={3}
-                alignSelf={
-                  message.role === "assistant" ? "flex-start" : "flex-end"
-                }
-                borderRadius={10}
-                bgColor={message.role === "assistant" ? "#fff" : "#096c7d"}
-                borderWidth={1}
-                borderColor="#000"
-              >
-                {message.content === "0L1o2a3d4i5n6g7" ? (
-                  <Flex flexDir="row" alignItems="center">
-                    <Spinner color="#444654" size={"sm"} />
-                    <Text ml={2}>{text}</Text>
-                  </Flex>
-                ) : (
-                  <Flex fontSize={15} w="100%">
-                    <Text
-                      style={{
-                        color:
-                          message.role === "assistant" ? "#444654" : "#fff",
-                        fontFamily: "Quicksand",
-                      }}
-                    >
-                      {message.content}
-                    </Text>
-                  </Flex>
-                )}
-              </Flex>
-            ))
-          )}
+            conversation.map((message) => (
+              <MessageComponent message={message} />
+            )
+            ))}
         </VStack>
       </ScrollView>
 
+     
       <Flex
         position="absolute"
         bottom={Platform.OS === "ios" ? keyboardOffset : 0}
         flexDirection="row"
-        alignItems="center"
+        alignItems="flex-end"
         p={2}
+        h={"30%"}
+        w={"100%"}
+        flex={1}
       >
         <Input
+          multiline
           flex={1}
           placeholder="Type your message..."
           placeholderTextColor={"#1d1d1d"}
@@ -231,6 +237,20 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
         >
           <Icon name="send" style={{ margin: 0 }} size={20} color="#fff" />
         </Button>
+      
+        {errorResponse && (
+        <Button 
+        ml={2}
+        style={{
+          backgroundColor: "#096c7d",
+          width: 45,
+          height: 45,
+          borderRadius: 10,
+        }}
+        onPress={handleRegenerate} title="Click me to regenerate">
+            <Icon name="sync" style={{ margin: 0 }} size={20} color="#fff" />
+        </Button>
+      )}
       </Flex>
     </ImageBackground>
   );
