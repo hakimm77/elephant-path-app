@@ -7,7 +7,8 @@ import {
   Button,
   VStack,
   Spinner,
-  View
+  View,
+  Box
 } from "native-base";
 import { IConversation } from "../utils/types";
 import { handleChat } from "../helpers/apiHandlers/handleChat";
@@ -143,14 +144,11 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
       imageStyle={{ opacity: 0.7 }}
     >
       <Flex
-        style={{
-          backgroundColor: "rgba(255, 255, 255, 0.8)",
-        }}
         h={"100%"}
       >
-        <ScrollView p={4} ref={scrollViewRef} style={{ backgroundColor: "rgba(255, 0, 0, 0.8)" }}
+        <ScrollView p={4} ref={scrollViewRef}
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd()}>
-          <VStack justifyContent="center" alignItems="center" pb={20} mt={10}>
+          <VStack justifyContent="center" alignItems="center" pb={5} mt={10}>
             <Flex
               flexDir="column"
               w="fit-content"
@@ -199,17 +197,14 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
 
 
         <Flex
-          bottom={Platform.OS === "ios" ? keyboardOffset : 0}
           flexDirection="row"
           alignItems="flex-end"
           p={2}
           maxH={"30%"}
+          mb={Platform.OS === "ios" ? keyboardOffset : 0}
           // minH={"30%"}
           // w={"100%"}
-          flex-flexShrink={0}
-          style={{
-            backgroundColor: "rgba(255, 0, 255, 0.8)",
-          }}
+          // flex-flexShrink={0}
         >
           <Input
             // h={"100%"}
