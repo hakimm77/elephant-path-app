@@ -19,11 +19,12 @@ import { MessageComponent } from "../components/conversation/MessageComponent";
 import uuid from 'react-native-uuid';
 
 
-export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
+export const BodhiBot: React.FC<{ userEmail: string; conversation:IConversation[]; setConversation:React.Dispatch<React.SetStateAction<IConversation[]>>; route: any }> = ({
   userEmail,
   route,
+  conversation,
+  setConversation,
 }) => {
-  const [conversation, setConversation] = useState<IConversation[]>([]);
   const [userInput, setUserInput] = useState("");
   const [previousUserInput, setPreviousUserInput] = useState("");
   const [loadingReponse, setLoadingResponse] = useState(false);
@@ -52,7 +53,7 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
     if (input) {
       Keyboard.dismiss();
       setLoadingResponse(true);
-
+      console.log("err: ", errorResponse);
       if (errorResponse) {
         conversation.pop();
         conversation.pop();
@@ -65,7 +66,7 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
       ]);
       scrollViewRef.current?.scrollToEnd({ animated: true });
       setUserInput("");
-
+      console.log("convo before submitt : ", conversation);
       await handleChat(
         conversation,
         setConversation,
@@ -74,6 +75,7 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
       );
     }
   };
+
   const handleRegenerate = async () => {
     // Remove error response
     conversation.pop();
@@ -88,7 +90,11 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
       setLoadingResponse,
       setErrorResponse,
     );
+  }
 
+  const saveChat = async (userEmail: string, conversation: IConversation[]) => {
+    console.log("saving chat: ", conversation)
+    handleSaveChat(userEmail, conversation);
   }
 
   useEffect(() => {
@@ -111,9 +117,8 @@ export const BodhiBot: React.FC<{ userEmail: string; route: any }> = ({
   }, [lesson]);
 
   useEffect(() => {
-    console.log("conversation: ", conversation);
     if (conversation && conversation.length > 0) {
-      handleSaveChat(userEmail, conversation);
+      saveChat(userEmail, conversation);
     }
   }, [conversation]);
 

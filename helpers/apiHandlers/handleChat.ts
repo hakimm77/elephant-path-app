@@ -17,6 +17,8 @@ export const handleChat = async (
 
   setErrorResponse(false);
 
+
+  console.log("submit: ", conversation)
   try {
     const response = await axios.post(`${api}/api/chat`, {
       conversation,

@@ -11,13 +11,15 @@ import { useEffect, useState } from "react";
 import { StatsComponent } from "../components/StatsComponent";
 import { getData } from "../helpers/auth/getData";
 import { handleDeleteAccount } from "../helpers/auth/handleDeleteAccount";
+import {handleClearChat} from "../helpers/apiHandlers/handleClearChat"
+import { IConversation } from "../utils/types";
 
 export const ProfileScreen: React.FC<{
   userEmail: string;
-  navigation: any;
-}> = ({ userEmail, navigation }) => {
+  setConversation: React.Dispatch<React.SetStateAction<IConversation[]>>;
+}> = ({ userEmail, setConversation }) => {
   const [stage, setStage] = useState(null);
-
+  console.log("convo func ", setConversation)
   const handleLogout = async () => {
     await removeData("user");
     await removeData("stage");
@@ -119,7 +121,7 @@ export const ProfileScreen: React.FC<{
       <Button
         onPress={handleLogout}
         position={"absolute"}
-        bottom={20}
+        bottom={5}
         w="70%"
         style={{ backgroundColor: "red" }}
       >
@@ -133,14 +135,30 @@ export const ProfileScreen: React.FC<{
           handleDeleteAccount(userEmail);
         }}
         position={"absolute"}
-        bottom={5}
-        w="70%"
-        style={{ backgroundColor: "red" }}
+        bottom={20}
+        // w="70%"
+        w = "70%"
+        style={{ backgroundColor: "blue" }}
       >
         <Text style={{ fontFamily: "Quicksand", fontSize: 18, color: "#fff" }}>
           Delete Account
         </Text>
       </Button>
+
+      <Button
+        onPress={async () => {
+          handleClearChat(userEmail, setConversation);
+        }}
+        position={"absolute"}
+        bottom={36}
+        w="70%"
+        style={{ backgroundColor: "red" }}
+      >
+        <Text style={{ fontFamily: "Quicksand", fontSize: 18, color: "#fff" }}>
+          Clear Chat
+        </Text>
+      </Button>
+
     </ImageBackground>
   );
 };

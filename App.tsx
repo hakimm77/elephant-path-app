@@ -16,6 +16,7 @@ import { Image, Keyboard, LogBox, Text, View } from "react-native";
 import { ContactScreen } from "./screens/ContactScreen";
 import { OnBoardingScreen } from "./screens/OnBoardingScreen";
 import { handleStageIdentification } from "./helpers/handleStageIdentification";
+import { IConversation } from "./utils/types";
 
 const config = {
   useSystemColorMode: false,
@@ -29,6 +30,7 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   LogBox.ignoreAllLogs();
+  const [conversation, setConversation] = useState<IConversation[]>([]);
   const [userEmail, setUserEmail] = useState("");
   const [fetchedEmail, setFetchedEmail] = useState("");
   const [status, setStatus] = useState<"auth" | "app" | "onboarding">("auth");
@@ -115,7 +117,7 @@ export default function App() {
               <Tab.Screen
                 name="BodhiBot"
                 children={(props) => (
-                  <BodhiBot {...props} userEmail={fetchedEmail} />
+                  <BodhiBot {...props} userEmail={fetchedEmail} conversation = {conversation} setConversation={setConversation}/>
                 )}
               />
               <Tab.Screen
@@ -132,16 +134,14 @@ export default function App() {
               />
               <Tab.Screen
                 name="Contact"
-                component={(props: any) => (
-                  <ContactScreen {...props} userEmail={fetchedEmail} />
-                )}
-              />
+              >
+              {() => <ContactScreen userEmail={fetchedEmail} />}
+              </Tab.Screen>
               <Tab.Screen
                 name="Profile"
-                component={(props: any) => (
-                  <ProfileScreen {...props} userEmail={fetchedEmail} />
-                )}
-              />
+              >
+                { () => <ProfileScreen userEmail={fetchedEmail} setConversation={setConversation} />}
+              </Tab.Screen>
             </Tab.Navigator>
           </NavigationContainer>
         ) : status === "auth" ? (
